@@ -87,7 +87,7 @@ namespace Profiler
 
             comboBox.SelectedIndex = defaultSelectionIndex;
 
-/*
+
             IPAddress savedIP = ip;
             short savedPort = Properties.Settings.Default.DefaultPort;
             IPAddress.TryParse(Properties.Settings.Default.DefaultIP, out savedIP);
@@ -96,7 +96,7 @@ namespace Profiler
 
 
             ScanNetworkForCompatibleDevices(ip);
-*/
+
         }
 
         private String GetIconByComputerName(String name)
@@ -111,7 +111,7 @@ namespace Profiler
             return result;
         }
 
-/*
+
         private void AddPlatform(IPAddress ip, short port, bool autofocus)
         {
             if (ip.Equals(IPAddress.None) || ip.Equals(IPAddress.Any) || ip.Equals(IPAddress.Loopback))
@@ -175,7 +175,6 @@ namespace Profiler
                 }
             }
         }
-*/            
 
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
