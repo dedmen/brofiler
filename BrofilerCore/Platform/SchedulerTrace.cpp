@@ -5,7 +5,7 @@ namespace Brofiler
 //////////////////////////////////////////////////////////////////////////
 CaptureStatus::Type SchedulerTrace::Start(int mode, const ThreadList& threads, bool autoAddUnknownThreads)
 {
-	if ((mode & STACK_WALK) != 0 && autoAddUnknownThreads != false)
+	if ((mode & STACK_WALK) != 0 && autoAddUnknownThreads != false && false)
 	{
 		Core::Get().DumpProgress("Enumerate threads");
 
