@@ -409,7 +409,7 @@ void Core::Activate( bool active )
 		}
 */
 
-		if (active)
+		if (active && false)
 		{
 			CaptureStatus::Type status = schedulerTrace->Start(SchedulerTrace::ALL, threads, true);
 
