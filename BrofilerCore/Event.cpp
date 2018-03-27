@@ -3,11 +3,12 @@
 #include "Core.h"
 #include "Thread.h"
 #include "EventDescriptionBoard.h"
+#include <containers.hpp>
 
 namespace Brofiler
 {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescription::Create(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/)
+EventDescription* EventDescription::Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/)
 {
 	static MT::Mutex creationLock;
 	MT::ScopedGuard guard(creationLock);
@@ -89,7 +90,7 @@ void FiberSyncData::DetachFromThread(EventStorage* storage)
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
 	byte flags = (ob.isSampling ? 0x1 : 0);
-	return stream << ob.name << ob.file << ob.line << ob.color << flags;
+	return stream << ob.name.c_str() << ob.file << ob.line << ob.color << flags;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)

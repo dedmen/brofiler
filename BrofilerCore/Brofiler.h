@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <containers.hpp>
 
 #if defined(__clang__) || defined(__GNUC__)
 #define BRO_GCC (1)
@@ -264,13 +265,13 @@ struct BROFILER_API EventDescription
 	// Have to place "hot" variables at the beginning of the class (here will be some padding)
 	// COLD //
 
-	const char* name;
+	intercept::types::r_string name;
 	const char* file;
 	uint32_t line;
 	uint32_t index;
 	uint32_t color;
 
-	static EventDescription* Create(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null);
+	static EventDescription* Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null);
 	static void DeleteAllDescriptions();
 private:
 	friend class EventDescriptionBoard;
