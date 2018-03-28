@@ -42,6 +42,7 @@ EventData* Event::Start(const EventDescription& description)
 	{
 		result = &storage->NextEvent();
 		result->description = &description;
+		result->sourceCode = std::nullopt;
 		result->Start();
 
 		if (description.isSampling)
@@ -90,7 +91,7 @@ void FiberSyncData::DetachFromThread(EventStorage* storage)
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
 	byte flags = (ob.isSampling ? 0x1 : 0);
-	return stream << ob.name.c_str() << ob.file << ob.line << ob.color << flags;
+	return stream << ob.name.c_str() << ob.file << ob.line << ob.color << flags << ob.source.c_str();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
@@ -100,17 +101,20 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
 {
-	return stream << (EventTime)(ob) << ob.description->index;
+	if (ob.sourceCode && !ob.sourceCode->empty())
+		return stream << static_cast<EventTime>(ob) << ob.description->index << static_cast<unsigned char>(1) << ob.sourceCode->c_str();
+	else
+		return stream << static_cast<EventTime>(ob) << ob.description->index << static_cast<unsigned char>(0);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const SyncData& ob)
 {
-	return stream << (EventTime)(ob) << ob.core << ob.reason << ob.newThreadId;
+	return stream << static_cast<EventTime>(ob) << ob.core << ob.reason << ob.newThreadId;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const FiberSyncData& ob)
 {
-	return stream << (EventTime)(ob) << ob.threadId;
+	return stream << static_cast<EventTime>(ob) << ob.threadId;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Category::Category(const EventDescription& description) : Event(description)

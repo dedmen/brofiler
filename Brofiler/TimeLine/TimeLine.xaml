@@ -139,9 +139,11 @@
             <Button x:Name="ClearButton" Click="ClearButton_Click" HorizontalAlignment="Left" Width="{StaticResource DefaultButtonSize}" Height="{StaticResource DefaultButtonSize}" VerticalAlignment="Center" ToolTip="Clear Active Session" Margin="1,0,0,0" Padding="-6">
                 <ContentControl Style="{StaticResource appbar_delete}" />
             </Button>
+            <!--
             <Button x:Name="ClearSampling" Click="ClearSamplingButton_Click" HorizontalAlignment="Left" Width="{StaticResource DefaultButtonSize}" Height="{StaticResource DefaultButtonSize}" VerticalAlignment="Center" ToolTip="Clear All Sampling Flags" Margin="1,0,0,0" Padding="-6">
                 <ContentControl Style="{StaticResource appbar_clean}" />
             </Button>
+            -->
             <local:PlatformSelector x:Name="PlatformCombo" Margin="4,0,0,0" VerticalAlignment="Top" Height="{StaticResource DefaultButtonSize}"/>
         <StackPanel x:Name="warningBlock"  Orientation="Horizontal">
                 <Image x:Name="warningIcon" Source="Icons/Warning-icon.png" Margin="5,0,0,0" Width="{StaticResource DefaultButtonSize}" Height="{StaticResource DefaultButtonSize}" />

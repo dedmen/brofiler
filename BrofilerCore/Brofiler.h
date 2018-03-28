@@ -236,7 +236,8 @@ struct EventTime
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct EventData : public EventTime
 {
-	const EventDescription* description;
+	EventDescription* description;
+	std::optional<intercept::types::r_string> sourceCode;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct BROFILER_API SyncData : public EventTime
@@ -270,6 +271,7 @@ struct BROFILER_API EventDescription
 	uint32_t line;
 	uint32_t index;
 	uint32_t color;
+	intercept::types::r_string source;
 
 	static EventDescription* Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null);
 	static void DeleteAllDescriptions();

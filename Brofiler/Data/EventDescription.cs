@@ -53,6 +53,7 @@ namespace Profiler.Data
         }
 
         private int id;
+        public string sourceCode;
         private Color forceColor;
 
         public Color Color { get; private set; }
@@ -114,6 +115,10 @@ namespace Profiler.Data
 
             byte flags = reader.ReadByte();
             desc.isSampling = (flags & IS_SAMPLING_FLAG) != 0;
+
+            int sourceLength = reader.ReadInt32();
+            if (sourceLength > 0)
+                desc.sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
 
             return desc;
         }
@@ -242,6 +247,8 @@ namespace Profiler.Data
 
     public class Entry : EventData, IComparable<Entry>
     {
+        public byte additionalDataType = 0;
+        public string sourceCode;
         public EventDescription Description { get; private set; }
 
         Entry() { }
@@ -263,6 +270,13 @@ namespace Profiler.Data
 
             int descriptionID = reader.ReadInt32();
             res.Description = board[descriptionID];
+
+            res.additionalDataType = reader.ReadByte();
+            if (res.additionalDataType == 1)
+            {
+                int sourceLength = reader.ReadInt32();
+                res.sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
+            }
 
             return res;
         }

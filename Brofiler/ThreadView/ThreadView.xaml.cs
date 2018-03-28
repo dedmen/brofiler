@@ -355,7 +355,7 @@ namespace Profiler
 
         private void RenderCanvas_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == System.Windows.Forms.MouseButtons.Middle)
             {
 				Mouse.OverrideCursor = null;
                 Input.IsDrag = false;

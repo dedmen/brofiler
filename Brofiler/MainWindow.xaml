@@ -19,11 +19,13 @@
         BorderThickness="1"
         ResizeMode="CanResizeWithGrip"
     >
+    <!--
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="settings" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
+    -->
     <Grid>
     	<Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
