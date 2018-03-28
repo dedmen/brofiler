@@ -6,3 +6,4 @@ Build/
 Publish/
 *.rej
 *.orig
+/Brofiler/.vs
