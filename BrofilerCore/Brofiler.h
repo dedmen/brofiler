@@ -266,6 +266,7 @@ struct BROFILER_API EventDescription
 	// Have to place "hot" variables at the beginning of the class (here will be some padding)
 	// COLD //
 
+	bool hasUse;
 	intercept::types::r_string name;
 	const char* file;
 	uint32_t line;
@@ -285,10 +286,10 @@ struct BROFILER_API Event
 {
 	EventData* data;
 
-	static EventData* Start(const EventDescription& description);
+	static EventData* Start(EventDescription& description);
 	static void Stop(EventData& data);
 
-	Event( const EventDescription& description )
+	Event( EventDescription& description )
 	{
 		data = Start(description);
 	}
@@ -302,7 +303,7 @@ struct BROFILER_API Event
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct BROFILER_API Category : public Event
 {
-	Category( const EventDescription& description );
+	Category(EventDescription& description );
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct ThreadScope

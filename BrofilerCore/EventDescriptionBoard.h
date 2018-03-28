@@ -14,6 +14,7 @@ class EventDescriptionBoard
 public:
 	EventDescription* CreateDescription();
 	void DeleteAllDescriptions();
+	void clearHasUseFlags();
 
 	static EventDescriptionBoard& Get();
 

@@ -178,6 +178,7 @@ void Core::DumpFrames()
 
 	frames.clear();
 	CleanupThreadsAndFibers();
+	EventDescriptionBoard::Get().clearHasUseFlags();
 
 	{
 		DumpProgress("Serializing SysCalls");

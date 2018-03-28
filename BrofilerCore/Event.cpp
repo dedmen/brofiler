@@ -25,7 +25,7 @@ void EventDescription::DeleteAllDescriptions() {
 	EventDescriptionBoard::Get().DeleteAllDescriptions();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription::EventDescription() : isSampling(false), name(""), file(""), line(0), color(0)
+EventDescription::EventDescription() : isSampling(false), hasUse(false), name(""), file(""), line(0), color(0)
 {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ EventDescription& EventDescription::operator=(const EventDescription&)
 	BRO_FAILED("It is pointless to copy EventDescription. Please, check you logic!"); return *this; 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventData* Event::Start(const EventDescription& description)
+EventData* Event::Start(EventDescription& description)
 {
 	EventData* result = nullptr;
 
@@ -57,6 +57,7 @@ void Event::Stop(EventData& data)
 {
 	data.Stop();
 
+	data.description->hasUse = true;
 	if (data.description->isSampling)
 	{
 		if (EventStorage* storage = Core::storage)
@@ -90,6 +91,9 @@ void FiberSyncData::DetachFromThread(EventStorage* storage)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
+	if (!ob.hasUse) //Don't send full Description if it is irrelevant
+		return stream << "" << "" << 0 << 0u << static_cast<byte>(0) << "";
+
 	byte flags = (ob.isSampling ? 0x1 : 0);
 	return stream << ob.name.c_str() << ob.file << ob.line << ob.color << flags << ob.source.c_str();
 }
@@ -117,7 +121,7 @@ OutputDataStream& operator<<(OutputDataStream& stream, const FiberSyncData& ob)
 	return stream << static_cast<EventTime>(ob) << ob.threadId;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Category::Category(const EventDescription& description) : Event(description)
+Category::Category(EventDescription& description) : Event(description)
 {
 	if (data)
 	{

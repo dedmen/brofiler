@@ -83,6 +83,16 @@ void EventDescriptionBoard::DeleteAllDescriptions()
 	board.clear();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void EventDescriptionBoard::clearHasUseFlags()
+{
+	MT::ScopedGuard guard(GetBoardLock());
+	for (auto it = board.begin(); it != board.end(); ++it)
+	{
+		EventDescription* desc = *it;
+		desc->hasUse = false;
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator << ( OutputDataStream& stream, const EventDescriptionBoard& ob)
 {
 	MT::ScopedGuard guard(GetBoardLock());
