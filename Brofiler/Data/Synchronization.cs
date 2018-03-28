@@ -78,28 +78,23 @@ namespace Profiler.Data
         }
     }
 
-    public class WaitInterval : Durable
+    public class ThisArgs : Durable
     {
         public SyncReason Reason { get; set; }
 		public byte core;
 
 		public ThreadDescription newThreadDesc;
-		public UInt64 newThreadId;
+		public string args;
 
 		public string ReasonText
 		{
 			get
 			{
-				if (Reason < SyncReason.SyncReasonCount)
-				{
-					return Reason.ToString() + String.Format("\nNew thread \"{0}\", {1}", (newThreadDesc == null) ? "Unknown" : newThreadDesc.Name, newThreadId);
-				}
-
-				return "Active\nCPU core : " + core.ToString();
+				return args;
 			}
 		}
 
-        public WaitInterval() { }
+        public ThisArgs() { }
     }
 
     public class NodeWaitInterval : Durable

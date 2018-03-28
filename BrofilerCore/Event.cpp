@@ -42,7 +42,8 @@ EventData* Event::Start(EventDescription& description)
 	{
 		result = &storage->NextEvent();
 		result->description = &description;
-		result->sourceCode = std::nullopt;
+        result->sourceCode = std::nullopt;
+        result->thisArgs.clear();
 		result->Start();
 
 		if (description.isSampling)
@@ -105,10 +106,16 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
 {
+    stream << static_cast<EventTime>(ob) << ob.description->index;
+
 	if (ob.sourceCode && !ob.sourceCode->empty())
-		return stream << static_cast<EventTime>(ob) << ob.description->index << static_cast<unsigned char>(1) << ob.sourceCode->c_str();
+		stream << static_cast<unsigned char>(1) << ob.sourceCode->c_str();
 	else
-		return stream << static_cast<EventTime>(ob) << ob.description->index << static_cast<unsigned char>(0);
+		stream << static_cast<unsigned char>(0);
+
+    stream << ob.thisArgs.c_str();
+
+    return stream;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const SyncData& ob)

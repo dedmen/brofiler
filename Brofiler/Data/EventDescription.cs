@@ -249,6 +249,7 @@ namespace Profiler.Data
     {
         public byte additionalDataType = 0;
         public string sourceCode;
+        public string thisArgs;
         public EventDescription Description { get; private set; }
 
         Entry() { }
@@ -277,6 +278,10 @@ namespace Profiler.Data
                 int sourceLength = reader.ReadInt32();
                 res.sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
             }
+
+            int thisArgsLength = reader.ReadInt32();
+            res.thisArgs = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(thisArgsLength));
+
 
             return res;
         }

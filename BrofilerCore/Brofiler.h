@@ -238,6 +238,7 @@ struct EventData : public EventTime
 {
 	EventDescription* description;
 	std::optional<intercept::types::r_string> sourceCode;
+    intercept::types::r_string thisArgs;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct BROFILER_API SyncData : public EventTime

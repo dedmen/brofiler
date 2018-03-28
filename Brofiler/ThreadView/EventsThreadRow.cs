@@ -450,49 +450,25 @@ namespace Profiler
                 dataContext.Add(node);
             }
 
-            // show current sync info
-            if (EventData.Sync != null && EventData.Sync.Intervals != null)
-			{
-				int index = Data.Utils.BinarySearchClosestIndex(EventData.Sync.Intervals, tick.Start);
-				if (index != -1)
-				{
-					bool insideWaitInterval = false;
-					WaitInterval interval = new WaitInterval() { Start = EventData.Sync.Intervals[index].Finish, Reason = EventData.Sync.Intervals[index].Reason };
-					if (index + 1 < EventData.Sync.Intervals.Count)
-					{
-						if (EventData.Sync.Intervals[index].Finish < tick.Start && tick.Start < EventData.Sync.Intervals[index + 1].Start)
-						{
-							UInt64 threadId = EventData.Sync.Intervals[index + 1].NewThreadId;
-
-							ThreadDescription threadDesc = null;
-							int threadIndex = -1;
-							if (Group.Board.ThreadID2ThreadIndex.TryGetValue(threadId, out threadIndex))
-							{
-								threadDesc = Group.Board.Threads[threadIndex];
-							}
-
-							interval.newThreadDesc = threadDesc;
-							interval.newThreadId = threadId;
-							
-							interval.Finish = EventData.Sync.Intervals[index + 1].Start;
-							dataContext.Add(interval);
-							insideWaitInterval = true;
-						}
-					}
-
-					if (!insideWaitInterval)
-					{
-						interval.Reason = SyncReason.SyncReasonActive;
-						interval.Start = EventData.Sync.Intervals[index].Start;
-						interval.Finish = EventData.Sync.Intervals[index].Finish;
-						interval.core = (byte)EventData.Sync.Intervals[index].Core;
-						dataContext.Add(interval);
-					}
-				}
-			}
-
             if (node != null)
             {
+
+
+                if (!String.IsNullOrEmpty(node.Entry.thisArgs))
+                {
+                    ThisArgs interval = new ThisArgs() { args = node.Entry.thisArgs };
+
+
+                    dataContext.Add(interval);
+
+                }
+
+
+
+
+
+
+
                 // build all intervals inside selected node
                 int from = Data.Utils.BinarySearchClosestIndex(frame.Synchronization, node.Entry.Start);
                 int to = Data.Utils.BinarySearchClosestIndex(frame.Synchronization, node.Entry.Finish);
