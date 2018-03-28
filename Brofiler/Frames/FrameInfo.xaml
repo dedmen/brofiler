@@ -12,6 +12,20 @@
         <ItemsPanelTemplate x:Key="CategoryListStyle">
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal"/>
         </ItemsPanelTemplate>
+	      <Style x:Key="{x:Type Label}" BasedOn="{StaticResource {x:Type Label}}" TargetType="Label">
+		      <Setter Property="Template">
+			      <Setter.Value>
+				      <ControlTemplate TargetType="Label">
+					      <Border>
+						      <ContentPresenter
+							      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+							      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+							      RecognizesAccessKey="False" />
+					      </Border>
+				      </ControlTemplate>
+			      </Setter.Value>
+		      </Setter>
+	      </Style>
         <Style x:Key="ButtonFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -89,6 +103,7 @@
                                         <ContentControl Style="{StaticResource appbar_page_code}" Margin="-10" Width="26" Height="26"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+	                              <!--
                                 <Separator />
                                 <MenuItem Header="Sample Function" Click="MenuSampleFunction">
                                     <MenuItem.Icon>
@@ -100,6 +115,7 @@
                                         <ContentControl Style="{StaticResource appbar_camera_flash_auto}" Margin="-10" Width="26" Height="26" />
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                -->
                             </ContextMenu>
                         </Grid.ContextMenu>
                         <Grid.ColumnDefinitions>

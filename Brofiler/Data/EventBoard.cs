@@ -68,12 +68,12 @@ namespace Profiler.Data
 
   public class EventBoardItem : BoardItem<EventDescription, EventNode>
   {
-        [DisplayName("S")]
-        public bool IsSampling
-        {
-            get { return Description.IsSampling; }
-            set { Description.IsSampling = value; }
-        }
+        //[DisplayName("S")]
+        //public bool IsSampling
+        //{
+        //    get { return Description.IsSampling; }
+        //    set { Description.IsSampling = value; }
+        //}
 
         [ColumnWidth(400)]
     public String Function { get { return Description.Name; } }

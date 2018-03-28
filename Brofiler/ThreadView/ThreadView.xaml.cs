@@ -105,14 +105,9 @@ namespace Profiler
                 ThreadDescription thread = group.Board.Threads[i];
                 ThreadData data = group.Threads[i];
 
-				bool threadHasData = false;
-				if ((data.Callstacks != null && data.Callstacks.Count > 3) ||
+				bool threadHasData = (data.Callstacks != null && data.Callstacks.Count > 3) ||
 					/*(data.Sync != null && data.Sync.Intervals.Count > 0) || */
-					(data.Events != null && data.Events.Count > 0))
-					
-				{
-					threadHasData = true;
-				}
+					(data.Events != null && data.Events.Count > 0);
 
                 if (threadHasData)
                 {
@@ -374,7 +369,7 @@ namespace Profiler
 
         private void RenderCanvas_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == System.Windows.Forms.MouseButtons.Middle)
             {
 				Mouse.OverrideCursor = Cursors.ScrollWE;
                 Input.IsDrag = true;

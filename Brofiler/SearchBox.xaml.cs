@@ -62,9 +62,9 @@ namespace Profiler
 
 		private void FilterText_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.Enter || e.SystemKey == Key.Enter)
-			{
-				TextEnter(FilterText.Text);
+			if (e.Key == Key.Enter || e.SystemKey == Key.Enter) {
+                if (TextEnter != null)
+				    TextEnter(FilterText.Text);
 			}
 		}
 
