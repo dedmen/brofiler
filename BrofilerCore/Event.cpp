@@ -113,7 +113,7 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
 	else
 		stream << static_cast<unsigned char>(0);
 
-    stream << ob.thisArgs.c_str();
+    stream << static_cast<intercept::types::r_string>(ob.thisArgs).c_str();
 
     return stream;
 }

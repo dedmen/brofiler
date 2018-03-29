@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <containers.hpp>
+#include <types.hpp>
 
 #if defined(__clang__) || defined(__GNUC__)
 #define BRO_GCC (1)
@@ -238,7 +238,7 @@ struct EventData : public EventTime
 {
 	EventDescription* description;
 	std::optional<intercept::types::r_string> sourceCode;
-    intercept::types::r_string thisArgs;
+    intercept::types::game_value thisArgs;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct BROFILER_API SyncData : public EventTime
