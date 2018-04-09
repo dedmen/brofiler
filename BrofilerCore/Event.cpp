@@ -95,7 +95,7 @@ void FiberSyncData::DetachFromThread(EventStorage* storage)
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
 	if (!ob.hasUse) //Don't send full Description if it is irrelevant
-		return stream << "" << "" << 0 << 0u << static_cast<byte>(0) << "";
+		return stream << "" << "" << 0 << 0 << 0u << 0.f << static_cast<byte>(0) << "";
 
 	byte flags = (ob.isSampling ? 0x1 : 0);
 	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << ob.budget << flags << ob.source.c_str();

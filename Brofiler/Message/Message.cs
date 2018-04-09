@@ -20,10 +20,10 @@ namespace Profiler
                 ...
          */
 
-        public const UInt32 NETWORK_PROTOCOL_VERSION_18 = 18; // Bumped version
+        public const UInt32 NETWORK_PROTOCOL_VERSION_22 = 22; // Bumped version
 
-        public const UInt32 NETWORK_PROTOCOL_VERSION = NETWORK_PROTOCOL_VERSION_18;
-		public const UInt32 NETWORK_PROTOCOL_MIN_VERSION = NETWORK_PROTOCOL_VERSION_18;
+        public const UInt32 NETWORK_PROTOCOL_VERSION = NETWORK_PROTOCOL_VERSION_22;
+		public const UInt32 NETWORK_PROTOCOL_MIN_VERSION = NETWORK_PROTOCOL_VERSION_22;
 
 
         public const UInt16 BROFILER_APP_ID = 0xB50F;

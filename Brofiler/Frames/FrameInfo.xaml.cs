@@ -213,6 +213,8 @@ namespace Profiler
 
 				ItemsControl root = EventTreeView;
 
+				EventTreeView.UpdateLayout();
+
 				int pathElementsCount = treePath.Count;
 				if (pathElementsCount > 0)
 				{

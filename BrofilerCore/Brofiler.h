@@ -306,6 +306,7 @@ struct BROFILER_API EventDescription
 	float budget;
 
 	static EventDescription* Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null, const unsigned long filter = 0, float budget = 0.0f);
+	static void DeleteAllDescriptions();
 private:
 	friend class EventDescriptionBoard;
 	EventDescription();
