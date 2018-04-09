@@ -25,8 +25,12 @@ BRO_INLINE const void* GetThreadUniqueID()
 
 #else
 
-#error implement GetThreadUniqueID
+#include <pthread.h>
 
+BRO_INLINE const void* GetThreadUniqueID()
+{
+	return pthread_self();
+}
 
 #endif
 

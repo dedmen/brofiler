@@ -27,7 +27,11 @@ namespace Brofiler
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ThreadDescription::ThreadDescription(const char* threadName, const MT::ThreadId& id, bool _fromOtherProcess) : threadID(id), fromOtherProcess(_fromOtherProcess)
 {
+	#ifdef __linux__
+	strcpy(name, threadName);
+	#else
 	strcpy_s(name, threadName);
+	#endif
 }
 
 
