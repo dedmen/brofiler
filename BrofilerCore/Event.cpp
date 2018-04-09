@@ -8,7 +8,7 @@
 namespace Brofiler
 {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescription::Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/)
+EventDescription* EventDescription::Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/, float budget /*= 0.0f*/)
 {
 	static MT::Mutex creationLock;
 	MT::ScopedGuard guard(creationLock);
@@ -18,6 +18,8 @@ EventDescription* EventDescription::Create(intercept::types::r_string eventName,
 	result->file = fileName;
 	result->line = fileLine;
 	result->color = eventColor;
+	result->budget = budget;
+	result->filter = filter;
 	return result;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +98,7 @@ OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &
 		return stream << "" << "" << 0 << 0u << static_cast<byte>(0) << "";
 
 	byte flags = (ob.isSampling ? 0x1 : 0);
-	return stream << ob.name.c_str() << ob.file << ob.line << ob.color << flags << ob.source.c_str();
+	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << ob.budget << flags << ob.source.c_str();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)

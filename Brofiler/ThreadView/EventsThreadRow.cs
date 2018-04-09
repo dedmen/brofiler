@@ -69,7 +69,7 @@ namespace Profiler
             EventData = data;
             Group = group;
             MaxDepth = 1;
-            IsExpanded = false;
+            IsExpanded = true;
 
             List<EventNode> rootCategories = new List<EventNode>();
             List<EventNode> nodesToProcess = new List<EventNode>();
@@ -176,15 +176,15 @@ namespace Profiler
             DirectX.ComplexDynamicMesh syncBuilder = new ComplexDynamicMesh(canvas, DIPSplitCount);
             DirectX.ComplexDynamicMesh syncWorkBuilder = new ComplexDynamicMesh(canvas, DIPSplitCount);
 
-            if (EventData.Sync != null && EventData.Sync.Intervals != null)
+            if (EventData.Sync != null && EventData.Sync != null)
             {
                 SyncReason stallReason = SyncReason.SyncReasonCount;
                 long stallFrom = 0;
                 int frameSyncIndex = 0;
 
-                for (int i = 0; i < EventData.Sync.Intervals.Count; i++)
+                for (int i = 0; i < EventData.Sync.Count; i++)
                 {
-                    SyncInterval sync = EventData.Sync.Intervals[i];
+                    SyncInterval sync = EventData.Sync[i];
 
                     Interval workInterval = scroll.TimeToUnit(sync);
 
