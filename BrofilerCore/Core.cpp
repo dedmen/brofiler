@@ -244,14 +244,8 @@ uint32 Core::DumpBoard(uint32 mode, EventTime timeSlice)
 	boardStream << (uint32)0; // Precision
 	boardStream << timeSlice;
 	boardStream << threads;
-	boardStream << fibers;
 	boardStream << mainThreadIndex;
 	boardStream << EventDescriptionBoard::Get();
-	boardStream << (uint32)0; // Tags
-	boardStream << (uint32)0; // Run
-	boardStream << (uint32)0; // Filters
-	boardStream << (uint32)0; // ThreadDescs
-	boardStream << mode; // Mode
 	Server::Get().Send(DataResponse::FrameDescriptionBoard, boardStream);
 
 	return boardNumber;

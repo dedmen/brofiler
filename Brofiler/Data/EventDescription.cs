@@ -235,16 +235,16 @@ namespace Profiler.Data
                 }
             }
 
-            if (response.ApplicationID == NetworkProtocol.BROFILER_APP_ID)
-            {
-                int fibersCount = reader.ReadInt32();
-                desc.Fibers = new List<FiberDescription>(fibersCount);
-                for (int i = 0; i < fibersCount; ++i)
-                {
-                    FiberDescription fiberDesc = FiberDescription.Read(response);
-                    desc.Fibers.Add(fiberDesc);
-                }
-            }
+            //if (response.ApplicationID == NetworkProtocol.BROFILER_APP_ID)
+            //{
+            //    int fibersCount = reader.ReadInt32();
+            //    desc.Fibers = new List<FiberDescription>(fibersCount);
+            //    for (int i = 0; i < fibersCount; ++i)
+            //    {
+            //        FiberDescription fiberDesc = FiberDescription.Read(response);
+            //        desc.Fibers.Add(fiberDesc);
+            //    }
+            //}
 
             desc.MainThreadIndex = reader.ReadInt32();
 
