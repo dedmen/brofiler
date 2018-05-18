@@ -50,7 +50,7 @@ namespace Profiler.Data
 
 		public double Duration
 		{
-			get { return TicksToMs(Finish - Start); }
+			get { return TicksToMs(Finish - Start)/1000; }
 		}
 
         public String DurationF1

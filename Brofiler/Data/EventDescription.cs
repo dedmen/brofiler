@@ -206,6 +206,7 @@ namespace Profiler.Data
 
             desc.TimeSettings = new TimeSettings();
             desc.TimeSettings.TicksToMs = 1000.0 / (double)reader.ReadInt64();
+            desc.TimeSettings.TicksToMs *= 1000;
             desc.TimeSettings.Origin = reader.ReadInt64();
             desc.TimeSettings.PrecisionCut = reader.ReadInt32();
             Durable.InitSettings(desc.TimeSettings);
