@@ -68,10 +68,23 @@ Server::~Server()
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Server & Server::Get()
-{
-	static Server instance(DEFAULT_PORT);
-	return instance;
+Server & Server::Get() {
+    static Server *instance;
+
+
+	if (instance) return *instance;
+
+	std::string commandLine = GetCommandLineA();
+	auto found = commandLine.find("-brofilerport");
+	if (found != std::string::npos) {
+		auto portStr = commandLine.substr(found + 14, commandLine.find(' ', found + 14) - (found + 14));
+		auto port = std::stoi(portStr);
+		instance = new Server(port);
+		return *instance;
+	}
+	
+	instance = new Server(DEFAULT_PORT);
+	return *instance;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
