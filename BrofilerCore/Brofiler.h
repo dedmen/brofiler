@@ -265,6 +265,7 @@ struct EventData : public EventTime
 {
 	EventDescription* description;
 	std::optional<intercept::types::r_string> sourceCode;
+	std::optional<intercept::types::r_string> altName;
     intercept::types::game_value thisArgs;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

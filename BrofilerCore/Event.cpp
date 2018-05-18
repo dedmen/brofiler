@@ -44,7 +44,8 @@ EventData* Event::Start(EventDescription& description)
 	{
 		result = &storage->NextEvent();
 		result->description = &description;
-        result->sourceCode = std::nullopt;
+		result->sourceCode = std::nullopt;
+		result->altName = std::nullopt;
         result->thisArgs.clear();
 		result->Start();
 
@@ -109,9 +110,11 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
 OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
 {
     stream << static_cast<EventTime>(ob) << ob.description->index;
-
+	
 	if (ob.sourceCode && !ob.sourceCode->empty())
 		stream << static_cast<unsigned char>(1) << ob.sourceCode->c_str();
+	else if (ob.altName && !ob.altName->empty())
+		stream << static_cast<unsigned char>(2) << ob.altName->c_str();
 	else
 		stream << static_cast<unsigned char>(0);
 
