@@ -2,12 +2,39 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Media;
 
 namespace Profiler.Data
 {
+    
+    public class StringMapRef
+    {
+        private long id;
+        public static long stringSize;
+        public static long stringCount;
+        private FrameCollection coll;
+
+        public StringMapRef(long inId, FrameCollection inColl)
+        {
+            id = inId;
+            coll = inColl;
+            string outS;
+            coll.StringMap.TryGetValue(id, out outS);
+            if (outS != null)
+                stringSize += outS.Length;
+            stringCount++;
+        }
+        public string Get()
+        {
+            string outS;
+            coll.StringMap.TryGetValue(id, out outS);
+            return outS ?? "";
+        }
+    }
+
     public class FileLine
     {
         public FileLine(String file, int line)
@@ -53,7 +80,7 @@ namespace Profiler.Data
         }
 
         private int id;
-        public string sourceCode;
+        public StringMapRef sourceCode;
         private Color forceColor;
 
         public Color Color { get; private set; }
@@ -98,7 +125,7 @@ namespace Profiler.Data
 			Brush = new SolidColorBrush(color);
 		}
 
-        static public EventDescription Read(BinaryReader reader, int id)
+        static public EventDescription Read(BinaryReader reader, int id, FrameCollection coll)
         {
             EventDescription desc = new EventDescription();
             int nameLength = reader.ReadInt32();
@@ -120,9 +147,7 @@ namespace Profiler.Data
             byte flags = reader.ReadByte();
             desc.isSampling = (flags & IS_SAMPLING_FLAG) != 0;
 
-            int sourceLength = reader.ReadInt32();
-            if (sourceLength > 0)
-                desc.sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
+            desc.sourceCode = new StringMapRef(reader.ReadInt64(), coll);
 
             return desc;
         }
@@ -132,19 +157,6 @@ namespace Profiler.Data
             return this;
         }
     }
-
-	public class FiberDescription
-	{
-		public UInt64 fiberID { get; set; }
-
-		public static FiberDescription Read(DataResponse response)
-		{
-			BinaryReader reader = response.Reader;
-			FiberDescription res = new FiberDescription();
-			res.fiberID = reader.ReadUInt64();
-			return res;
-		}
-	}
 
     public class ThreadDescription
     {
@@ -178,7 +190,7 @@ namespace Profiler.Data
         public TimeSettings TimeSettings { get; private set; }
         public List<ThreadDescription> Threads { get; private set; }
         public Dictionary<UInt64, int> ThreadID2ThreadIndex { get; private set; }
-		public List<FiberDescription> Fibers { get; private set; }
+        public FrameCollection frameColl;
 
         private List<EventDescription> board = new List<EventDescription>();
         public List<EventDescription> Board
@@ -195,11 +207,12 @@ namespace Profiler.Data
             }
         }
 
-        public static EventDescriptionBoard Read(DataResponse response)
+        public static EventDescriptionBoard Read(DataResponse response, FrameCollection coll)
         {
             BinaryReader reader = response.Reader;
 
             EventDescriptionBoard desc = new EventDescriptionBoard();
+            desc.frameColl = coll;
             desc.Response = response;
             desc.BaseStream = reader.BaseStream;
             desc.ID = reader.ReadInt32();
@@ -252,7 +265,7 @@ namespace Profiler.Data
             int count = reader.ReadInt32();
             for (int i = 0; i < count; ++i)
             {
-                desc.board.Add(EventDescription.Read(reader, i));
+                desc.board.Add(EventDescription.Read(reader, i, coll));
             }
 
             // TODO: Tags
@@ -276,8 +289,8 @@ namespace Profiler.Data
     public class Entry : EventData, IComparable<Entry>
     {
         public byte additionalDataType = 0;
-        public string sourceCode;
-        public string altName;
+        public StringMapRef sourceCode;
+        public StringMapRef altName;
         public string thisArgs;
         public EventDescription Description { get; private set; }
 
@@ -304,13 +317,16 @@ namespace Profiler.Data
             res.additionalDataType = reader.ReadByte();
             if (res.additionalDataType == 1)
             {
-                int sourceLength = reader.ReadInt32();
-                res.sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
+                res.sourceCode = new StringMapRef(reader.ReadInt64(), board.frameColl);
             }
             if (res.additionalDataType == 2)
             {
-                int sourceLength = reader.ReadInt32();
-                res.altName = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
+                res.altName = new StringMapRef(reader.ReadInt64(), board.frameColl);
+            }
+            if (res.additionalDataType == 3)
+            {
+                res.altName = new StringMapRef(reader.ReadInt64(), board.frameColl);
+                res.sourceCode = new StringMapRef(reader.ReadInt64(), board.frameColl);
             }
 
             int thisArgsLength = reader.ReadInt32();

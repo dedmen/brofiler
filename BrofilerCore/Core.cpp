@@ -227,8 +227,42 @@ void Core::CleanupThreadsAndFibers()
 */
 }
 
-uint32 Core::DumpBoard(uint32 mode, EventTime timeSlice)
-{
+uint32 Core::DumpBoard(uint32 mode, EventTime timeSlice) {
+
+	OutputDataStream stringStream;
+	std::map<uint64_t, intercept::types::r_string> stringMap;
+	//uint64_t stringSize;
+
+	for (auto i = 0u; i < threads.size(); ++i)
+		threads[i]->storage.eventBuffer.ForEach([&](const EventData& data) {
+			if (data.sourceCode) {
+				stringMap.insert({ reinterpret_cast<uint64_t>(data.sourceCode->data()), *data.sourceCode });
+				//stringSize += data.sourceCode->size();
+			}
+				
+			if (data.altName) {
+				stringMap.insert({ reinterpret_cast<uint64_t>(data.altName->data()), *data.altName });
+				//stringSize += data.altName->size();
+			}
+				
+		});
+
+	for (auto& it : EventDescriptionBoard::Get().GetEvents()) {
+		stringMap.insert({ reinterpret_cast<uint64_t>(it->source.data()), it->source });
+		//stringSize += it->source.size();
+	}
+	//OutputDebugStringA(std::to_string(stringSize).c_str());
+	stringStream << static_cast<uint32_t>(stringMap.size());
+	//stringSize = 0;
+	for (auto& it : stringMap) {
+		stringStream << it.first << it.second.c_str();
+		//stringSize += it.second.size();
+	}
+	//OutputDebugStringA(std::to_string(stringSize).c_str());
+	Server::Get().Send(DataResponse::TagsPack, stringStream);
+
+
+
 	uint32 mainThreadIndex = 0;
 
 	for (size_t i = 0; i < threads.size(); ++i)

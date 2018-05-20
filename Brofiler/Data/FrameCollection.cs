@@ -266,7 +266,8 @@ namespace Profiler.Data
 
     public class FrameCollection : ObservableCollection<Frame>
     {
-        Dictionary<int, FrameGroup> groups = new Dictionary<int, FrameGroup>();
+        public Dictionary<int, FrameGroup> groups = new Dictionary<int, FrameGroup>();
+        public SortedDictionary<long, string> StringMap = new SortedDictionary<long, string>();
 
         public void Flush()
         {
@@ -282,7 +283,7 @@ namespace Profiler.Data
             {
                 case DataResponse.Type.FrameDescriptionBoard:
                     {
-                        EventDescriptionBoard board = EventDescriptionBoard.Read(response);
+                        EventDescriptionBoard board = EventDescriptionBoard.Read(response, this);
                         groups[board.ID] = new FrameGroup(board);
                         break;
                     }
@@ -368,7 +369,21 @@ namespace Profiler.Data
 
                         break;
                     }
+                case DataResponse.Type.TagsPack: {
+                    StringMap.Clear();
+                    int count = response.Reader.ReadInt32();
 
+                    for (int i = 0; i < count; ++i) {
+                        long id = response.Reader.ReadInt64();
+                        
+                        int sourceLength = response.Reader.ReadInt32();
+                        if (sourceLength > 0) {
+                            StringMap.Add(id, System.Text.Encoding.UTF8.GetString(response.Reader.ReadBytes(sourceLength)));
+                        }
+                    }
+
+                    break;
+                }
                 default:
                     {
                         Debug.Fail("Skipping response: ", response.ResponseType.ToString());

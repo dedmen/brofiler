@@ -278,11 +278,11 @@ namespace Profiler
                         if (item.DataContext is EventNode)
                         {
                             if (((EventNode) item.DataContext).Entry.additionalDataType == 1)
-                                windowDataContext = SourceView<EventBoardItem, EventDescription, EventNode>.Create(SummaryTable.DataContext as Board<EventBoardItem, EventDescription, EventNode>, (item.DataContext as EventNode).Entry.sourceCode);
-                            else if (String.IsNullOrEmpty((item.DataContext as EventNode).Description.sourceCode))
+                                windowDataContext = SourceView<EventBoardItem, EventDescription, EventNode>.Create(SummaryTable.DataContext as Board<EventBoardItem, EventDescription, EventNode>, (item.DataContext as EventNode).Entry.sourceCode.Get());
+                            else if (String.IsNullOrEmpty((item.DataContext as EventNode).Description.sourceCode.Get()))
                                 windowDataContext = SourceView<EventBoardItem, EventDescription, EventNode>.Create(SummaryTable.DataContext as Board<EventBoardItem, EventDescription, EventNode>, (item.DataContext as EventNode).Description.Path);
                             else
-                                windowDataContext = SourceView<EventBoardItem, EventDescription, EventNode>.Create(SummaryTable.DataContext as Board<EventBoardItem, EventDescription, EventNode>, (item.DataContext as EventNode).Description.sourceCode);
+                                windowDataContext = SourceView<EventBoardItem, EventDescription, EventNode>.Create(SummaryTable.DataContext as Board<EventBoardItem, EventDescription, EventNode>, (item.DataContext as EventNode).Description.sourceCode.Get());
 
 
 

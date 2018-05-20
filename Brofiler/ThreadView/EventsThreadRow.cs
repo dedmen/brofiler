@@ -316,7 +316,7 @@ namespace Profiler
                         Color color = lum < 0.33 ? Colors.White : Colors.Black;
 
                         canvas.Text.Draw(new Point(intervalPx.Left + TextDrawOffset, Offset + level * RenderParams.BaseHeight),
-                                         entry.additionalDataType == 2 ? entry.altName : entry.Description.Name,
+                                         entry.additionalDataType == 2 ? entry.altName.Get() : entry.Description.Name,
                                          color,
                                          TextAlignment.Left,
                                          intervalPx.Width - TextDrawOffset);
