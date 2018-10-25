@@ -295,6 +295,7 @@ namespace Profiler.Data
 	{
 	    public byte additionalDataType = 0;
 	    public string sourceCode;
+	    public string altName;
 	    public string thisArgs;
         public EventDescription Description { get; private set; }
 		public EventFrame Frame { get; set; }
@@ -323,7 +324,12 @@ namespace Profiler.Data
 		        int sourceLength = reader.ReadInt32();
 		        sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
 		    }
-		    int thisArgsLength = reader.ReadInt32();
+		    if (additionalDataType == 2)
+		    {
+		        int sourceLength = reader.ReadInt32();
+		        altName = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
+		    }
+            int thisArgsLength = reader.ReadInt32();
 		    thisArgs = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(thisArgsLength));
 
         }

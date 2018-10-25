@@ -7,6 +7,7 @@
 
 #include "Platform/SchedulerTrace.h"
 #include "Platform/SymbolEngine.h"
+#include <containers.hpp>
 
 
 extern "C" Brofiler::EventData* NextEvent()
@@ -47,7 +48,11 @@ void SortMemoryPool(MemoryPool<T, SIZE>& memoryPool)
 ThreadDescription::ThreadDescription(const char* threadName, ThreadID id, bool _fromOtherProcess, int32 _maxDepth /*= 1*/, int32 _priority /*= 0*/, uint32 _mask /*= 0*/)
 	: threadID(id), fromOtherProcess(_fromOtherProcess), maxDepth(_maxDepth), priority(_priority), mask(_mask)
 {
-	strcpy_s(name, threadName);
+#ifdef __linux__
+    strcpy(name, threadName);
+#else
+    strcpy_s(name, threadName);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -305,6 +310,38 @@ void Core::DumpBoard(uint32 mode, EventTime timeSlice)
 		if (threads[i]->description.threadID == mainThreadID)
 			mainThreadIndex = (uint32)i;
 
+    OutputDataStream stringStream;
+    std::map<uint64_t, intercept::types::r_string> stringMap;
+    //uint64_t stringSize;
+
+    for (auto i = 0u; i < threads.size(); ++i)
+        threads[i]->storage.eventBuffer.ForEach([&](const EventData& data) {
+        if (data.sourceCode) {
+            stringMap.insert({ reinterpret_cast<uint64_t>(data.sourceCode->data()), *data.sourceCode });
+            //stringSize += data.sourceCode->size();
+        }
+
+        if (data.altName) {
+            stringMap.insert({ reinterpret_cast<uint64_t>(data.altName->data()), *data.altName });
+            //stringSize += data.altName->size();
+        }
+
+    });
+
+    for (auto& it : EventDescriptionBoard::Get().GetEvents()) {
+        stringMap.insert({ reinterpret_cast<uint64_t>(it.source.data()), it.source });
+        //stringSize += it->source.size();
+    }
+    stringStream << static_cast<uint32_t>(stringMap.size());
+    //stringSize = 0;
+    for (auto& it : stringMap) {
+        stringStream << it.first << it.second.c_str();
+        //stringSize += it.second.size();
+    }
+    //OutputDebugStringA(std::to_string(stringSize).c_str());
+    Server::Get().Send(DataResponse::TagsPack, stringStream);
+
+
 	OutputDataStream boardStream;
 
 	boardStream << boardNumber;
@@ -313,14 +350,14 @@ void Core::DumpBoard(uint32 mode, EventTime timeSlice)
 	boardStream << (uint32)0; // Precision
 	boardStream << timeSlice;
 	boardStream << threads;
-	boardStream << fibers;
+	//boardStream << fibers;
 	boardStream << mainThreadIndex;
 	boardStream << EventDescriptionBoard::Get();
-	boardStream << (uint32)0; // Tags
-	boardStream << (uint32)0; // Run
-	boardStream << (uint32)0; // Filters
-	boardStream << (uint32)0; // ThreadDescs
-	boardStream << mode; // Mode
+	//boardStream << (uint32)0; // Tags
+	//boardStream << (uint32)0; // Run
+	//boardStream << (uint32)0; // Filters
+	//boardStream << (uint32)0; // ThreadDescs
+	//boardStream << mode; // Mode
 	Server::Get().Send(DataResponse::FrameDescriptionBoard, boardStream);
 }
 

@@ -170,7 +170,7 @@ struct ETWRuntime
 
 	void Reset()
 	{
-		activeCores.assign(INVALID_THREAD_ID);
+		//activeCores.assign(INVALID_THREAD_ID);
 		activeSyscalls.resize(0);;
 	}
 };
@@ -321,25 +321,25 @@ void ETW::AdjustPrivileges()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void ETW::ResolveSysCalls()
 {
-	Core::Get().syscallCollector.syscallPool.ForEach([this](SysCallData& data)
-	{
-		auto it = syscallDescriptions.find(data.id);
-		if (it == syscallDescriptions.end())
-		{
-			const Symbol* symbol = SymbolEngine::Get()->GetSymbol(data.id);
-			if (symbol != nullptr)
-			{
-				std::string name(symbol->function.begin(), symbol->function.end());
-				
-				data.description = EventDescription::CreateShared(name.c_str(), "SysCall", (long)data.id);
-				syscallDescriptions.insert(std::pair<const uint64_t, const Brofiler::EventDescription *>(data.id, data.description));
-			}
-		}
-		else
-		{
-			data.description = it->second;
-		}
-	});
+	//Core::Get().syscallCollector.syscallPool.ForEach([this](SysCallData& data)
+	//{
+	//	auto it = syscallDescriptions.find(data.id);
+	//	if (it == syscallDescriptions.end())
+	//	{
+	//		const Symbol* symbol = SymbolEngine::Get()->GetSymbol(data.id);
+	//		if (symbol != nullptr)
+	//		{
+	//			std::string name(symbol->function.begin(), symbol->function.end());
+	//			
+	//			data.description = EventDescription::CreateShared(name.c_str(), "SysCall", (long)data.id);
+	//			syscallDescriptions.insert(std::pair<const uint64_t, const Brofiler::EventDescription *>(data.id, data.description));
+	//		}
+	//	}
+	//	else
+	//	{
+	//		data.description = it->second;
+	//	}
+	//});
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <types.hpp>
 
 #if defined(__clang__) || defined(__GNUC__)
 #define BRO_GCC (1)
@@ -309,6 +310,9 @@ struct EventTime
 struct EventData : public EventTime
 {
 	const EventDescription* description;
+    std::optional<intercept::types::r_string> sourceCode;
+    std::optional<intercept::types::r_string> altName;
+    intercept::types::game_value thisArgs;
 
 	bool operator<(const EventData& other) const
 	{
@@ -342,17 +346,18 @@ struct BROFILER_API EventDescription
 	// Have to place "hot" variables at the beginning of the class (here will be some padding)
 	// COLD //
 
-	const char* name;
+    intercept::types::r_string name;
 	const char* file;
 	uint32_t line;
 	uint32_t index;
 	uint32_t color;
 	uint32_t filter;
 	float budget;
+    intercept::types::r_string source;
 
-	static EventDescription* Create(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
-	static EventDescription* CreateShared(const char* eventName, const char* fileName = nullptr, const unsigned long fileLine = 0, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
-
+	static EventDescription* Create(intercept::types::r_string, const char* fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
+	static EventDescription* CreateShared(intercept::types::r_string, const char* fileName = nullptr, const unsigned long fileLine = 0, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
+    static void DeleteAllDescriptions();
 	EventDescription();
 private:
 	friend class EventDescriptionBoard;
@@ -366,7 +371,7 @@ struct BROFILER_API Event
 	static EventData* Start(const EventDescription& description);
 	static void Stop(EventData& data);
 
-	static void Push(const char* name);
+	static void Push(intercept::types::r_string name);
 	static void Push(const EventDescription& description);
 	static void Pop();
 

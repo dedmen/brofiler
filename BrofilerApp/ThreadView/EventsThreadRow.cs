@@ -316,7 +316,7 @@ namespace Profiler
 						Color color = lum < DirectX.Utils.LuminanceThreshold ? Colors.White : Colors.Black;
 
 						canvas.Text.Draw(new Point(intervalPx.Left + TextDrawOffset, Offset + level * RenderParams.BaseHeight),
-										 entry.Description.Name,
+						                entry.additionalDataType == 2 ? entry.altName : entry.Description.Name,
 										 color,
 										 TextAlignment.Left,
 										 intervalPx.Width - TextDrawOffset);

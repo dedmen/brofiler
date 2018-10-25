@@ -2,6 +2,7 @@
 #include "Event.h"
 
 #include <mutex>
+#include <containers.hpp>
 
 namespace Brofiler
 {
@@ -23,7 +24,7 @@ const EventDescriptionList& EventDescriptionBoard::GetEvents() const
 	return boardDescriptions;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescriptionBoard::CreateDescription(const char* name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
+EventDescription* EventDescriptionBoard::CreateDescription(intercept::types::r_string name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
 {
 	std::lock_guard<std::mutex> lock(GetBoardLock());
 
@@ -39,10 +40,15 @@ EventDescription* EventDescriptionBoard::CreateDescription(const char* name, con
 
 	return &desc;
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescriptionBoard::CreateSharedDescription(const char* name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
+
+void EventDescriptionBoard::DeleteAllDescriptions() {
+    std::lock_guard<std::mutex> lock(GetBoardLock());
+    __debugbreak();
+}
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+EventDescription* EventDescriptionBoard::CreateSharedDescription(intercept::types::r_string name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
 {
-	StringHash nameHash(name);
+	StringHash nameHash(name.c_str());
 
 	std::lock_guard<std::mutex> lock(sharedLock);
 
@@ -50,8 +56,7 @@ EventDescription* EventDescriptionBoard::CreateSharedDescription(const char* nam
 
 	if (cached.second)
 	{
-		const char* nameCopy = sharedNames.Add(name, strlen(name) + 1, false);
-		cached.first->second = CreateDescription(nameCopy, file, line, color, filter);
+		cached.first->second = CreateDescription(name, file, line, color, filter);
 	}
 
 	return cached.first->second;

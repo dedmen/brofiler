@@ -5,18 +5,22 @@
 #include "Event.h"
 #include "Core.h"
 #include "EventDescriptionBoard.h"
+#include <containers.hpp>
 
 namespace Brofiler
 {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescription::Create(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
+EventDescription* EventDescription::Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
 {
 	return EventDescriptionBoard::Get().CreateDescription(eventName, fileName, fileLine, eventColor, filter);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescription::CreateShared(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
+EventDescription* EventDescription::CreateShared(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
 {
 	return EventDescriptionBoard::Get().CreateSharedDescription(eventName, fileName, fileLine, eventColor, filter);
+}
+void EventDescription::DeleteAllDescriptions() {
+    EventDescriptionBoard::Get().DeleteAllDescriptions();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 EventDescription::EventDescription() : name(""), file(""), line(0), color(0)
@@ -36,6 +40,9 @@ EventData* Event::Start(const EventDescription& description)
 	{
 		result = &storage->NextEvent();
 		result->description = &description;
+        result->sourceCode = std::nullopt;
+        result->altName = std::nullopt;
+        result->thisArgs.clear();
 		result->Start();
 	}
 	return result;
@@ -64,7 +71,7 @@ void BRO_INLINE PopEvent(EventStorage* pStorage, int64_t timestampFinish)
 			storage->pushPopEventStack[--storage->pushPopEventStackIndex]->finish = timestampFinish;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Event::Push(const char* name)
+void Event::Push(intercept::types::r_string name)
 {
 	if (EventStorage* storage = Core::storage)
 	{
@@ -174,7 +181,7 @@ void Tag::Attach(const EventDescription& description, const char* val)
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
 	byte flags = 0;
-	return stream << ob.name << ob.file << ob.line << ob.filter << ob.color << (float)0.0f << flags;
+	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << (float)0.0f << flags << ob.source.c_str();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
@@ -184,17 +191,28 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
 {
-	return stream << (EventTime)(ob) << (ob.description ? ob.description->index : (uint32)-1);
+    stream << static_cast<EventTime>(ob) << (ob.description ? ob.description->index : (uint32)-1);
+
+    if (ob.sourceCode && !ob.sourceCode->empty())
+        stream << static_cast<unsigned char>(1) << ob.sourceCode->c_str();
+    else if (ob.altName && !ob.altName->empty())
+        stream << static_cast<unsigned char>(2) << ob.altName->c_str();
+    else
+        stream << static_cast<unsigned char>(0);
+
+    stream << static_cast<intercept::types::r_string>(ob.thisArgs).c_str();
+
+    return stream;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const SyncData& ob)
 {
-	return stream << (EventTime)(ob) << ob.core << ob.reason << ob.newThreadId;
+	return stream << static_cast<EventTime>(ob) << ob.core << ob.reason << ob.newThreadId;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const FiberSyncData& ob)
 {
-	return stream << (EventTime)(ob) << ob.threadId;
+	return stream << static_cast<EventTime>(ob) << ob.threadId;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Category::Category(const EventDescription& description) : Event(description)
