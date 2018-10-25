@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,7 +53,8 @@ namespace Profiler.Data
 		}
 
 		private int id;
-		private Color forceColor;
+	    public string sourceCode;
+        private Color forceColor;
 
 		public Color Color { get; private set; }
 		public Color ForceColor
@@ -135,7 +136,12 @@ namespace Profiler.Data
 			byte flags = reader.ReadByte();
 			desc.isSampling = (flags & IS_SAMPLING_FLAG) != 0;
 
-			return desc;
+		    int sourceLength = reader.ReadInt32();
+		    if (sourceLength > 0)
+		        desc.sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
+
+
+            return desc;
 		}
 
 		public override Object GetSharedKey()
@@ -287,7 +293,9 @@ namespace Profiler.Data
 
 	public class Entry : EventData, IComparable<Entry>
 	{
-		public EventDescription Description { get; private set; }
+	    public byte additionalDataType = 0;
+	    public string sourceCode;
+        public EventDescription Description { get; private set; }
 		public EventFrame Frame { get; set; }
 
 		protected Entry() { }
@@ -307,7 +315,15 @@ namespace Profiler.Data
 			ReadEventData(reader);
 			int index = reader.ReadInt32();
 			Description = index != -1 ? board[index] : null;
-		}
+
+		    additionalDataType = reader.ReadByte();
+		    if (additionalDataType == 1)
+		    {
+		        int sourceLength = reader.ReadInt32();
+		        sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
+		    }
+
+        }
 
 		public static Entry Read(BinaryReader reader, EventDescriptionBoard board)
 		{

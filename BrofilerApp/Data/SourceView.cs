@@ -151,5 +151,9 @@ namespace Profiler.Data
 
 			return new SourceView<TItem, TDescription, TNode>(board, path, File.ReadAllText(file));
 		}
-	}
+	    public static SourceView<TItem, TDescription, TNode> Create(Board<TItem, TDescription, TNode> board, String code)
+	    {
+	        return new SourceView<TItem, TDescription, TNode>(board, new FileLine("<inline>", 0), code);
+	    }
+    }
 }

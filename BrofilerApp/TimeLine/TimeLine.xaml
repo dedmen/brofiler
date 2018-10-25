@@ -50,7 +50,7 @@
 			    </Label.LayoutTransform>
                 </Label>
 
-                <Label Content="{Binding FilteredDescription, Mode=OneWay}" Height="Auto" VerticalAlignment="Top" Width="Auto" FontFamily="Consolas" FontSize="12" Padding="0" Margin="-1,0,0,3" SnapsToDevicePixels="True" Grid.ColumnSpan="2" >
+                <Label Content="{Binding FilteredDescription, Mode=OneWay}" Background="Lime" Foreground="Black" Height="Auto" VerticalAlignment="Top" Width="Auto" FontFamily="Consolas" FontSize="12" Padding="0" Margin="-1,0,0,3" SnapsToDevicePixels="True" Grid.ColumnSpan="2" >
                     <Label.LayoutTransform>
                         <TransformGroup>
                             <ScaleTransform/>
