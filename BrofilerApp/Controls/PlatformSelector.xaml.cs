@@ -87,16 +87,16 @@ namespace Profiler
 
 			comboBox.SelectedIndex = defaultSelectionIndex;
 
-			/*
-						IPAddress savedIP = ip;
-						short savedPort = Properties.Settings.Default.DefaultPort;
-						IPAddress.TryParse(Properties.Settings.Default.DefaultIP, out savedIP);
+		
+			IPAddress savedIP = ip;
+			short savedPort = Properties.Settings.Default.DefaultPort;
+			IPAddress.TryParse(Properties.Settings.Default.DefaultIP, out savedIP);
 
-						AddPlatform(savedIP, savedPort, true);
+			AddPlatform(savedIP, savedPort, true);
 
 
-						ScanNetworkForCompatibleDevices(ip);
-			*/
+			ScanNetworkForCompatibleDevices(ip);
+
 		}
 
 		private String GetIconByComputerName(String name)
@@ -111,71 +111,69 @@ namespace Profiler
 			return result;
 		}
 
-		/*
-				private void AddPlatform(IPAddress ip, short port, bool autofocus)
-				{
-					if (ip.Equals(IPAddress.None) || ip.Equals(IPAddress.Any) || ip.Equals(IPAddress.Loopback))
-						return;
+	    private void AddPlatform(IPAddress ip, short port, bool autofocus)
+	    {
+		    if (ip.Equals(IPAddress.None) || ip.Equals(IPAddress.Any) || ip.Equals(IPAddress.Loopback))
+			    return;
 
-					Task.Run(() =>
-					{
-						PingReply reply = new Ping().Send(ip, 16);
+		    Task.Run(() =>
+		    {
+			    PingReply reply = new Ping().Send(ip, 16);
 
-						if (reply.Status == IPStatus.Success)
-						{
-							String name = reply.Address.ToString();
+			    if (reply.Status == IPStatus.Success)
+			    {
+				    String name = reply.Address.ToString();
 
-							try
-							{
-								IPHostEntry entry = Dns.GetHostEntry(reply.Address);
-								if (entry != null)
-									name = entry.HostName;
-							}
-							catch (SocketException) { }
+				    try
+				    {
+					    IPHostEntry entry = Dns.GetHostEntry(reply.Address);
+					    if (entry != null)
+						    name = entry.HostName;
+				    }
+				    catch (SocketException) { }
 
-							Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-							{
-								var newPlatform = new PlatformDescription() { Name = name, IP = reply.Address, Port = port, Icon = GetIconByComputerName(name) };
+				    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+				    {
+					    var newPlatform = new PlatformDescription() { Name = name, IP = reply.Address, Port = port, Icon = GetIconByComputerName(name) };
 
-								bool needAdd = true;
+					    bool needAdd = true;
 
-								foreach (PlatformDescription platform in platforms)
-								{
-									if (platform.IP.Equals(reply.Address) && platform.Port == port)
-									{
-										newPlatform = platform;
-										needAdd = false;
-										break;
-									}
-								}
+					    foreach (PlatformDescription platform in platforms)
+					    {
+						    if (platform.IP.Equals(reply.Address) && platform.Port == port)
+						    {
+							    newPlatform = platform;
+							    needAdd = false;
+							    break;
+						    }
+					    }
 
-								if (needAdd)
-									platforms.Add(newPlatform);
+					    if (needAdd)
+						    platforms.Add(newPlatform);
 
-								if (autofocus)
-									comboBox.SelectedItem = newPlatform;
-							}));
-						}
-					});
-				}
+					    if (autofocus)
+						    comboBox.SelectedItem = newPlatform;
+				    }));
+			    }
+		    });
+	    }
 
 
-				private void ScanNetworkForCompatibleDevices(IPAddress startAddress)
-				{
-					byte[] address = startAddress.GetAddressBytes();
-					byte originalIndex = address[address.Length-1];
-					for (byte i = 0; i < 255; ++i)
-					{
-						if (i != originalIndex)
-						{
-							address[address.Length-1] = i;
-							IPAddress ip = new IPAddress(address);
+	    private void ScanNetworkForCompatibleDevices(IPAddress startAddress)
+	    {
+		    byte[] address = startAddress.GetAddressBytes();
+		    byte originalIndex = address[address.Length-1];
+		    for (byte i = 0; i < 255; ++i)
+		    {
+			    if (i != originalIndex)
+			    {
+				    address[address.Length-1] = i;
+				    IPAddress ip = new IPAddress(address);
 
-							AddPlatform(new IPAddress(address), PlatformDescription.DEFAULT_PORT, false);
-						}
-					}
-				}
-		*/
+				    AddPlatform(new IPAddress(address), PlatformDescription.DEFAULT_PORT, false);
+			    }
+		    }
+	    }
 
 		private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
