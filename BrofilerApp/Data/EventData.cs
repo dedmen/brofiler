@@ -42,14 +42,14 @@ namespace Profiler.Data
 		private String name;
 		public String Name { get { return name; } }
 
-		private String fullName;
-		public String FullName
+		private StringMapRef fullName;
+		public StringMapRef FullName
 		{
 			get { return fullName; }
 			set
 			{
 				fullName = value;
-				name = StripFunctionArguments(fullName);
+				name = StripFunctionArguments(fullName.Get());
 				name = StripReturnValue(name);
 			}
 		}

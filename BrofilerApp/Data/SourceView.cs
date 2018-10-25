@@ -89,7 +89,7 @@ namespace Profiler.Data
 		where TNode : TreeNode<TDescription>
 		where TDescription : Description
 	{
-		public String Description { get { return SourceFile != null ? SourceFile.File : "Unknown File"; } }
+		public String Description { get { return SourceFile != null ? SourceFile.File.Get() : "Unknown File"; } }
 
 		private SourceView(Board<TItem, TDescription, TNode> board, FileLine path, String text)
 		{
@@ -99,7 +99,7 @@ namespace Profiler.Data
 	  {
 		  return (boardItem.Description != null &&
 				  boardItem.Description.Path != null &&
-								  boardItem.Description.Path.File == path.File);
+								  boardItem.Description.Path.File.Get() == path.File.Get());
 	  });
 
 			foreach (TItem item in boardItems)
@@ -123,10 +123,10 @@ namespace Profiler.Data
 
 		public static SourceView<TItem, TDescription, TNode> Create(Board<TItem, TDescription, TNode> board, FileLine path)
 		{
-			if (path == null || String.IsNullOrEmpty(path.File))
+			if (path == null || String.IsNullOrEmpty(path.File.Get()))
 				return null;
 
-			String file = path.File;
+			String file = path.File.Get();
 
 			while (!File.Exists(file))
 			{
@@ -153,7 +153,7 @@ namespace Profiler.Data
 		}
 	    public static SourceView<TItem, TDescription, TNode> Create(Board<TItem, TDescription, TNode> board, String code)
 	    {
-	        return new SourceView<TItem, TDescription, TNode>(board, new FileLine("<inline>", 0), code);
+	        return new SourceView<TItem, TDescription, TNode>(board, new FileLine(new StringMapRef("<inline>"), 0), code);
 	    }
     }
 }

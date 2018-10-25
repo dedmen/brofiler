@@ -14,7 +14,7 @@ namespace Profiler.Data
 
 		public override int GetHashCode()
 		{
-			return Description.Name.GetHashCode() ^ (Description.Path != null ? Description.Path.File.GetHashCode() : 0);
+			return Description.Name.GetHashCode() ^ (Description.Path != null ? Description.Path.File.Get().GetHashCode() : 0);
 		}
 
 		public SamplingSharedKey(SamplingDescription desc)
@@ -27,7 +27,7 @@ namespace Profiler.Data
 			if (obj is SamplingSharedKey)
 			{
 				SamplingSharedKey other = obj as SamplingSharedKey;
-				return Description.Name == other.Description.Name && Description.Path.File == other.Description.Path.File;
+				return Description.Name == other.Description.Name && Description.Path.File.Get() == other.Description.Path.File.Get();
 			}
 			return false;
 		}
@@ -64,22 +64,22 @@ namespace Profiler.Data
 			}
 		}
 
-		public static SamplingDescription UnresolvedDescription = new SamplingDescription() { Module = "Unresolved", FullName = "Unresolved", Address = 0, Path = FileLine.Empty };
+		public static SamplingDescription UnresolvedDescription = new SamplingDescription() { Module = "Unresolved", FullName = new StringMapRef("Unresolved"), Address = 0, Path = FileLine.Empty };
 
 		public static SamplingDescription Create(BinaryReader reader)
 		{
 			SamplingDescription description = new SamplingDescription();
 			description.Address = reader.ReadUInt64();
 			description.Module = Utils.ReadBinaryWideString(reader);
-			description.FullName = Utils.ReadBinaryWideString(reader);
-			description.Path = new FileLine(Utils.ReadBinaryWideString(reader), reader.ReadInt32());
+			description.FullName = new StringMapRef(Utils.ReadBinaryWideString(reader));
+			description.Path = new FileLine(new StringMapRef(Utils.ReadBinaryWideString(reader)), reader.ReadInt32());
 
 			return description;
 		}
 
 		public static SamplingDescription Create(UInt64 address)
 		{
-			return new SamplingDescription() { Module = "Unresolved", FullName = String.Format("0x{0:x}", address), Address = address, Path = FileLine.Empty };
+			return new SamplingDescription() { Module = "Unresolved", FullName = new StringMapRef(String.Format("0x{0:x}", address)), Address = address, Path = FileLine.Empty };
 		}
 
 		public override Object GetSharedKey()

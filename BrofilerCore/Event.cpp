@@ -10,12 +10,12 @@
 namespace Brofiler
 {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescription::Create(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
+EventDescription* EventDescription::Create(intercept::types::r_string eventName, intercept::types::r_string fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
 {
 	return EventDescriptionBoard::Get().CreateDescription(eventName, fileName, fileLine, eventColor, filter);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescription::CreateShared(intercept::types::r_string eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
+EventDescription* EventDescription::CreateShared(intercept::types::r_string eventName, intercept::types::r_string fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
 {
 	return EventDescriptionBoard::Get().CreateSharedDescription(eventName, fileName, fileLine, eventColor, filter);
 }
@@ -181,7 +181,7 @@ void Tag::Attach(const EventDescription& description, const char* val)
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
 	byte flags = 0;
-	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << (float)0.0f << flags << reinterpret_cast<uint64_t>(ob.source.hash());
+	return stream << static_cast<uint64_t>(ob.name.hash()) << static_cast<uint64_t>(ob.file.hash()) << ob.line << ob.filter << ob.color << (float)0.0f << flags << static_cast<uint64_t>(ob.source.hash());
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
@@ -194,11 +194,11 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
     stream << static_cast<EventTime>(ob) << (ob.description ? ob.description->index : (uint32)-1);
 
     if (ob.sourceCode && !ob.sourceCode->empty())
-        stream << static_cast<unsigned char>(1) << reinterpret_cast<uint64_t>(ob.sourceCode->hash());
+        stream << static_cast<unsigned char>(1) << static_cast<uint64_t>(ob.sourceCode->hash());
     else if (ob.altName && !ob.altName->empty())
-        stream << static_cast<unsigned char>(2) << reinterpret_cast<uint64_t>(ob.altName->hash());
+        stream << static_cast<unsigned char>(2) << static_cast<uint64_t>(ob.altName->hash());
     else if (ob.sourceCode && !ob.sourceCode->empty() && ob.altName && !ob.altName->empty())
-        stream << static_cast<unsigned char>(3) << reinterpret_cast<uint64_t>(ob.altName->c_str()) << reinterpret_cast<uint64_t>(ob.sourceCode->hash());
+        stream << static_cast<unsigned char>(3) << static_cast<uint64_t>(ob.altName->hash()) << static_cast<uint64_t>(ob.sourceCode->hash());
     else
         stream << static_cast<unsigned char>(0);
 

@@ -347,7 +347,7 @@ struct BROFILER_API EventDescription
 	// COLD //
 
     intercept::types::r_string name;
-	const char* file;
+    intercept::types::r_string file;
 	uint32_t line;
 	uint32_t index;
 	uint32_t color;
@@ -355,8 +355,8 @@ struct BROFILER_API EventDescription
 	float budget;
     intercept::types::r_string source;
 
-	static EventDescription* Create(intercept::types::r_string, const char* fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
-	static EventDescription* CreateShared(intercept::types::r_string, const char* fileName = nullptr, const unsigned long fileLine = 0, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
+	static EventDescription* Create(intercept::types::r_string, intercept::types::r_string fileName, const unsigned long fileLine, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
+    static EventDescription* CreateShared(intercept::types::r_string, intercept::types::r_string fileName = {}, const unsigned long fileLine = 0, const unsigned long eventColor = Color::Null, const unsigned long filter = 0);
     static void DeleteAllDescriptions();
 	EventDescription();
 private:

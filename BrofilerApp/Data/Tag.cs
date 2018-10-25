@@ -18,7 +18,7 @@ namespace Profiler.Data
 	{
 		public EventDescription Description { get; set; }
 		public Timestamp Time { get; set; }
-		public String Name => Description.FullName;
+		public String Name => Description.FullName.Get();
 		public virtual String FormattedValue { get; }
 
 		public long Start => Time.Time;

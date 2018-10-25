@@ -330,6 +330,7 @@ namespace Profiler.Data
 		public Dictionary<int, FrameGroup> groups = new Dictionary<int, FrameGroup>();
 		Dictionary<int, SummaryPack> summaries = new Dictionary<int, SummaryPack>();
 	    public SortedDictionary<long, string> StringMap = new SortedDictionary<long, string>();
+	    public DataResponse StringCacheResp;
 
         public void Flush()
 		{
@@ -454,6 +455,11 @@ namespace Profiler.Data
 					}
                 case DataResponse.Type.Reserved_1:
                 {
+                    int gid = response.Reader.ReadInt32();
+                    //FrameGroup group = groups[gid];
+
+                    //group.Responses.Add(response);
+                    StringCacheResp = response;
                     StringMap.Clear();
                     int count = response.Reader.ReadInt32();
 

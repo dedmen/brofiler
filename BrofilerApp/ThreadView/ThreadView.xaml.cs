@@ -214,7 +214,7 @@ namespace Profiler
 			if (node != null)
 			{
 				//HoverLines.AddRect(rect, FrameHover.Color);
-				ToolTip = new TooltipInfo { Text = String.Format("{0}   {1:0.000}ms", node.Name, node.Duration), Rect = rect };
+				ToolTip = new TooltipInfo { Text = String.Format("{0}   {1:0.00000}ms", node.Name, node.Duration), Rect = rect };
 			}
 			else
 			{

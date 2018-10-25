@@ -24,7 +24,7 @@ const EventDescriptionList& EventDescriptionBoard::GetEvents() const
 	return boardDescriptions;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescriptionBoard::CreateDescription(intercept::types::r_string name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
+EventDescription* EventDescriptionBoard::CreateDescription(intercept::types::r_string name, intercept::types::r_string file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
 {
 	std::lock_guard<std::mutex> lock(GetBoardLock());
 
@@ -46,7 +46,7 @@ void EventDescriptionBoard::DeleteAllDescriptions() {
     __debugbreak();
 }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescriptionBoard::CreateSharedDescription(intercept::types::r_string name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
+EventDescription* EventDescriptionBoard::CreateSharedDescription(intercept::types::r_string name, intercept::types::r_string file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
 {
 	StringHash nameHash(name.c_str());
 

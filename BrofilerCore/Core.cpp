@@ -311,25 +311,28 @@ void Core::DumpBoard(uint32 mode, EventTime timeSlice)
 			mainThreadIndex = (uint32)i;
 
     OutputDataStream stringStream;
+    stringStream << boardNumber;
     std::map<uint64_t, intercept::types::r_string> stringMap;
     //uint64_t stringSize;
 
     for (auto i = 0u; i < threads.size(); ++i)
         threads[i]->storage.eventBuffer.ForEach([&](const EventData& data) {
         if (data.sourceCode) {
-            stringMap.insert({ reinterpret_cast<uint64_t>(data.sourceCode->hash()), *data.sourceCode });
+            stringMap.insert({ static_cast<uint64_t>(data.sourceCode->hash()), *data.sourceCode });
             //stringSize += data.sourceCode->size();
         }
 
         if (data.altName) {
-            stringMap.insert({ reinterpret_cast<uint64_t>(data.altName->hash()), *data.altName });
+            stringMap.insert({ static_cast<uint64_t>(data.altName->hash()), *data.altName });
             //stringSize += data.altName->size();
         }
 
     });
 
     for (auto& it : EventDescriptionBoard::Get().GetEvents()) {
-        stringMap.insert({ reinterpret_cast<uint64_t>(it.source.hash()), it.source });
+        stringMap.insert({ static_cast<uint64_t>(it.source.hash()), it.source });
+        stringMap.insert({ static_cast<uint64_t>(it.name.hash()), it.name });
+        stringMap.insert({ static_cast<uint64_t>(it.file.hash()), it.file });
         //stringSize += it->source.size();
     }
     stringStream << static_cast<uint32_t>(stringMap.size());
@@ -339,7 +342,7 @@ void Core::DumpBoard(uint32 mode, EventTime timeSlice)
         //stringSize += it.second.size();
     }
     //OutputDebugStringA(std::to_string(stringSize).c_str());
-    Server::Get().Send(DataResponse::TagsPack, stringStream);
+    Server::Get().Send(DataResponse::Reserved_1, stringStream);
 
 
 	OutputDataStream boardStream;
@@ -512,7 +515,7 @@ ThreadEntry* Core::RegisterThread(const ThreadDescription& description, EventSto
 	ThreadEntry* entry = Memory::New<ThreadEntry>(description, slot);
 	threads.push_back(entry);
 
-	if (isActive && slot != nullptr)
+	if (slot != nullptr)
 		*slot = &entry->storage;
 
 	return entry;

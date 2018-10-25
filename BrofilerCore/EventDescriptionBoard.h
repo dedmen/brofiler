@@ -33,8 +33,8 @@ class EventDescriptionBoard
 	// Singleton instance of the board
 	static EventDescriptionBoard instance;
 public:
-	EventDescription* CreateDescription(intercept::types::r_string name, const char* file = nullptr, uint32_t line = 0, uint32_t color = Color::Null, uint32_t filter = 0);
-	EventDescription* CreateSharedDescription(intercept::types::r_string name, const char* file = nullptr, uint32_t line = 0, uint32_t color = Color::Null, uint32_t filter = 0);
+    EventDescription* CreateDescription(intercept::types::r_string name, intercept::types::r_string file = {}, uint32_t line = 0, uint32_t color = Color::Null, uint32_t filter = 0);
+	EventDescription* CreateSharedDescription(intercept::types::r_string name, intercept::types::r_string file = {}, uint32_t line = 0, uint32_t color = Color::Null, uint32_t filter = 0);
     void DeleteAllDescriptions();
 	static EventDescriptionBoard& Get();
 

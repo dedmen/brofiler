@@ -136,7 +136,7 @@ namespace Profiler
 							// node is not intersect with any categoryNode (add to category tree)
 							EventNode fakeCategoryNode = new EventNode(frame.CategoriesTree, node.Entry);
 
-							node.Entry.SetOverrideColor(GenerateColorFromString(node.Entry.Description.FullName));
+							node.Entry.SetOverrideColor(GenerateColorFromString(node.Entry.Description.FullName.Get()));
 
 							rootCategories.Add(fakeCategoryNode);
 							frame.CategoriesTree.Children.Add(fakeCategoryNode);

@@ -15,6 +15,7 @@ namespace Profiler.Data
         public static long stringSize;
         public static long stringCount;
         private FrameCollection coll;
+        private string cache = null;
 
         public StringMapRef(long inId, FrameCollection inColl)
         {
@@ -26,30 +27,36 @@ namespace Profiler.Data
                 stringSize += outS.Length;
             stringCount++;
         }
+        public StringMapRef(string staticIn) //Ugly workaround for internal strings
+        {
+            cache = staticIn;
+        }
         public string Get()
         {
+            if (cache != null) return cache;
             string outS;
             coll.StringMap.TryGetValue(id, out outS);
+            cache = outS;
             return outS ?? "";
         }
     }
 
     public class FileLine
 	{
-		public FileLine(String file, int line)
+		public FileLine(StringMapRef file, int line)
 		{
 			File = file;
 			Line = line;
 
-			if (!String.IsNullOrEmpty(File))
+			if (!String.IsNullOrEmpty(File.Get()))
 			{
-				int index = File.LastIndexOfAny(new char[] { '\\', '/' });
-				ShortName = index != -1 ? File.Substring(index + 1) : File;
-				ShortPath = String.Format("{0}:{1}", File, Line);
+				int index = File.Get().LastIndexOfAny(new char[] { '\\', '/' });
+				ShortName = index != -1 ? File.Get().Substring(index + 1) : File.Get();
+				ShortPath = String.Format("{0}:{1}", File.Get(), Line);
 			}
 		}
 
-		public String File { get; private set; }
+		public StringMapRef File { get; private set; }
 		public int Line { get; private set; }
 		public String ShortName { get; private set; }
 		public String ShortPath { get; private set; }
@@ -59,7 +66,7 @@ namespace Profiler.Data
 			return ShortPath;
 		}
 
-		public static FileLine Empty = new FileLine(String.Empty, 0);
+		public static FileLine Empty = new FileLine(new StringMapRef(String.Empty), 0);
 	}
 
 	public class EventDescription : Description
@@ -95,7 +102,7 @@ namespace Profiler.Data
 					}
 					else
 					{
-						Random rnd = new Random(FullName.GetHashCode());
+						Random rnd = new Random(FullName.Get().GetHashCode());
 
 						do
 						{
@@ -126,11 +133,6 @@ namespace Profiler.Data
 		public bool IsSleep { get { return Color == Colors.White; } }
 
 		public EventDescription() { }
-		public EventDescription(String name, int id)
-		{
-			FullName = name;
-			this.id = id;
-		}
 
 		const byte IS_SAMPLING_FLAG = 0x1;
 
@@ -143,13 +145,13 @@ namespace Profiler.Data
 		static public EventDescription Read(BinaryReader reader, int id, FrameCollection coll)
 		{
 			EventDescription desc = new EventDescription();
-			int nameLength = reader.ReadInt32();
-			desc.FullName = new String(reader.ReadChars(nameLength));
-			desc.id = id;
+			//int nameLength = reader.ReadInt32();
+			desc.FullName = new StringMapRef(reader.ReadInt64(), coll);
+            desc.id = id;
 
-			int fileLength = reader.ReadInt32();
-			String file = new String(reader.ReadChars(fileLength));
-			desc.Path = new FileLine(file, reader.ReadInt32());
+			//int fileLength = reader.ReadInt32();
+			var file = new StringMapRef(reader.ReadInt64(), coll);
+            desc.Path = new FileLine(file, reader.ReadInt32());
 			desc.Filter = reader.ReadUInt32();
 			UInt32 color = reader.ReadUInt32();
 			desc.Color = Color.FromArgb((byte)(color >> 24),
@@ -162,9 +164,7 @@ namespace Profiler.Data
 			byte flags = reader.ReadByte();
 			desc.isSampling = (flags & IS_SAMPLING_FLAG) != 0;
 
-		    int sourceLength = reader.ReadInt32();
-		    if (sourceLength > 0)
-		        desc.sourceCode = new StringMapRef(reader.ReadInt64(), coll);
+		    desc.sourceCode = new StringMapRef(reader.ReadInt64(), coll);
 
 
             return desc;
@@ -348,12 +348,10 @@ namespace Profiler.Data
 		    additionalDataType = reader.ReadByte();
 		    if (additionalDataType == 1)
 		    {
-		        int sourceLength = reader.ReadInt32();
 		        sourceCode = new StringMapRef(reader.ReadInt64(), board.frameColl);
             }
 		    if (additionalDataType == 2)
 		    {
-		        int sourceLength = reader.ReadInt32();
 		        altName = new StringMapRef(reader.ReadInt64(), board.frameColl);
 		    }
 		    if (additionalDataType == 3)
