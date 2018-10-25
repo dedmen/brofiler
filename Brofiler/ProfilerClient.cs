@@ -84,7 +84,7 @@ namespace Profiler
     private IPAddress ipAddress;
     private int port = -1;
 
-		const int PORT_RANGE = 4;
+		const int PORT_RANGE = 1;
 
 		private bool CheckConnection()
 		{

@@ -96,10 +96,10 @@ void FiberSyncData::DetachFromThread(EventStorage* storage)
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
 	if (!ob.hasUse) //Don't send full Description if it is irrelevant
-		return stream << "" << "" << 0 << 0 << 0u << 0.f << static_cast<byte>(0) << reinterpret_cast<uint64_t>(intercept::types::r_string().data());
+		return stream << "" << "" << 0 << 0 << 0u << 0.f << static_cast<byte>(0) << static_cast<uint64_t>(intercept::types::r_string().hash());
 
 	byte flags = (ob.isSampling ? 0x1 : 0);
-	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << ob.budget << flags << reinterpret_cast<uint64_t>(ob.source.data());
+	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << ob.budget << flags << static_cast<uint64_t>(ob.source.hash());
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
@@ -112,11 +112,11 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
     stream << static_cast<EventTime>(ob) << ob.description->index;
 	
 	if (ob.sourceCode && !ob.sourceCode->empty() && ob.altName && !ob.altName->empty())
-		stream << static_cast<unsigned char>(3) << reinterpret_cast<uint64_t>(ob.altName->data()) << reinterpret_cast<uint64_t>(ob.sourceCode->data());
+		stream << static_cast<unsigned char>(3) << static_cast<uint64_t>(ob.altName->hash()) << static_cast<uint64_t>(ob.sourceCode->hash());
 	else if (ob.sourceCode && !ob.sourceCode->empty())
-		stream << static_cast<unsigned char>(1) << reinterpret_cast<uint64_t>(ob.sourceCode->data());
+		stream << static_cast<unsigned char>(1) << static_cast<uint64_t>(ob.sourceCode->hash());
 	else if (ob.altName && !ob.altName->empty())
-		stream << static_cast<unsigned char>(2) << reinterpret_cast<uint64_t>(ob.altName->data());
+		stream << static_cast<unsigned char>(2) << static_cast<uint64_t>(ob.altName->hash());
 	else														
 		stream << static_cast<unsigned char>(0);
 

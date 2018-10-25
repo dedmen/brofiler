@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.ObjectModel;
-using System.Windows.Data;
-using System.IO;
 using System.Diagnostics;
 
 namespace Profiler.Data
@@ -87,6 +83,7 @@ namespace Profiler.Data
         }
     }
 
+
     public class FrameGroup
     {
 
@@ -97,7 +94,7 @@ namespace Profiler.Data
         public List<ThreadData> Fibers { get; set; }
 		public ThreadData MainThread { get { return Threads[Board.MainThreadIndex]; } }
 
-		public List<DataResponse> Responses { get; set; }
+        public List<DataResponse> Responses { get; set; }
 
         public FrameGroup(EventDescriptionBoard board)
         {
@@ -275,6 +272,7 @@ namespace Profiler.Data
                 group.UpdateEventsSynchronization();
 
             groups.Clear();
+            //StringMap.Clear();
         }
 
         public void Add(DataResponse response)

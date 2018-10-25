@@ -146,6 +146,7 @@ namespace Profiler
                             frames.Flush();
                             ScrollToEnd();
                         }
+                        //ProfilerClient.Get().Close();
                         break;
 
                     case DataResponse.Type.Handshake:
