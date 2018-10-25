@@ -407,7 +407,7 @@ void Core::Activate( bool active )
 			entry->Activate(active);
 		}
 
-		if (active)
+		if (false && active) //Don't want ETW
 		{
 			CaptureStatus::Type status = schedulerTrace->Start(SchedulerTrace::ALL, threads, true);
 
