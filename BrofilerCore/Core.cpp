@@ -317,19 +317,19 @@ void Core::DumpBoard(uint32 mode, EventTime timeSlice)
     for (auto i = 0u; i < threads.size(); ++i)
         threads[i]->storage.eventBuffer.ForEach([&](const EventData& data) {
         if (data.sourceCode) {
-            stringMap.insert({ reinterpret_cast<uint64_t>(data.sourceCode->data()), *data.sourceCode });
+            stringMap.insert({ reinterpret_cast<uint64_t>(data.sourceCode->hash()), *data.sourceCode });
             //stringSize += data.sourceCode->size();
         }
 
         if (data.altName) {
-            stringMap.insert({ reinterpret_cast<uint64_t>(data.altName->data()), *data.altName });
+            stringMap.insert({ reinterpret_cast<uint64_t>(data.altName->hash()), *data.altName });
             //stringSize += data.altName->size();
         }
 
     });
 
     for (auto& it : EventDescriptionBoard::Get().GetEvents()) {
-        stringMap.insert({ reinterpret_cast<uint64_t>(it.source.data()), it.source });
+        stringMap.insert({ reinterpret_cast<uint64_t>(it.source.hash()), it.source });
         //stringSize += it->source.size();
     }
     stringStream << static_cast<uint32_t>(stringMap.size());

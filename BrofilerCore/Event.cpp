@@ -181,7 +181,7 @@ void Tag::Attach(const EventDescription& description, const char* val)
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
 	byte flags = 0;
-	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << (float)0.0f << flags << ob.source.c_str();
+	return stream << ob.name.c_str() << ob.file << ob.line << ob.filter << ob.color << (float)0.0f << flags << reinterpret_cast<uint64_t>(ob.source.hash());
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
@@ -194,9 +194,11 @@ OutputDataStream& operator<<(OutputDataStream& stream, const EventData& ob)
     stream << static_cast<EventTime>(ob) << (ob.description ? ob.description->index : (uint32)-1);
 
     if (ob.sourceCode && !ob.sourceCode->empty())
-        stream << static_cast<unsigned char>(1) << ob.sourceCode->c_str();
+        stream << static_cast<unsigned char>(1) << reinterpret_cast<uint64_t>(ob.sourceCode->hash());
     else if (ob.altName && !ob.altName->empty())
-        stream << static_cast<unsigned char>(2) << ob.altName->c_str();
+        stream << static_cast<unsigned char>(2) << reinterpret_cast<uint64_t>(ob.altName->hash());
+    else if (ob.sourceCode && !ob.sourceCode->empty() && ob.altName && !ob.altName->empty())
+        stream << static_cast<unsigned char>(3) << reinterpret_cast<uint64_t>(ob.altName->c_str()) << reinterpret_cast<uint64_t>(ob.sourceCode->hash());
     else
         stream << static_cast<unsigned char>(0);
 

@@ -327,10 +327,11 @@ namespace Profiler.Data
 
 	public class FrameCollection : ObservableCollection<Frame>
 	{
-		Dictionary<int, FrameGroup> groups = new Dictionary<int, FrameGroup>();
+		public Dictionary<int, FrameGroup> groups = new Dictionary<int, FrameGroup>();
 		Dictionary<int, SummaryPack> summaries = new Dictionary<int, SummaryPack>();
+	    public SortedDictionary<long, string> StringMap = new SortedDictionary<long, string>();
 
-		public void Flush()
+        public void Flush()
 		{
 			foreach (FrameGroup group in groups.Values)
 				group.UpdateEventsSynchronization();
@@ -352,7 +353,7 @@ namespace Profiler.Data
 
 				case DataResponse.Type.FrameDescriptionBoard:
 					{
-						EventDescriptionBoard board = EventDescriptionBoard.Read(response);
+						EventDescriptionBoard board = EventDescriptionBoard.Read(response, this);
 						FrameGroup group = new FrameGroup(board);
 						groups[board.ID] = group;
 
@@ -451,8 +452,25 @@ namespace Profiler.Data
 						}
 						break;
 					}
+                case DataResponse.Type.Reserved_1:
+                {
+                    StringMap.Clear();
+                    int count = response.Reader.ReadInt32();
 
-				default:
+                    for (int i = 0; i < count; ++i)
+                    {
+                        long id = response.Reader.ReadInt64();
+
+                        int sourceLength = response.Reader.ReadInt32();
+                        if (sourceLength > 0)
+                        {
+                            StringMap.Add(id, System.Text.Encoding.UTF8.GetString(response.Reader.ReadBytes(sourceLength)));
+                        }
+                    }
+
+                    break;
+                }
+                default:
 					{
 						Debug.Fail("Skipping response: ", response.ResponseType.ToString());
 						break;
