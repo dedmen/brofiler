@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace Profiler.Data
 			{
 				int index = File.LastIndexOfAny(new char[] { '\\', '/' });
 				ShortName = index != -1 ? File.Substring(index + 1) : File;
-				ShortPath = String.Format("{0}:{1}", ShortName, Line);
+				ShortPath = String.Format("{0}:{1}", File, Line);
 			}
 		}
 
