@@ -254,16 +254,16 @@ namespace Profiler.Data
 				}
 			}
 
-			if (response.ApplicationID == NetworkProtocol.BROFILER_APP_ID)
-			{
-				int fibersCount = reader.ReadInt32();
-				desc.Fibers = new List<FiberDescription>(fibersCount);
-				for (int i = 0; i < fibersCount; ++i)
-				{
-					FiberDescription fiberDesc = FiberDescription.Read(response);
-					desc.Fibers.Add(fiberDesc);
-				}
-			}
+			//if (response.ApplicationID == NetworkProtocol.BROFILER_APP_ID)
+			//{
+			//	int fibersCount = reader.ReadInt32();
+			//	desc.Fibers = new List<FiberDescription>(fibersCount);
+			//	for (int i = 0; i < fibersCount; ++i)
+			//	{
+			//		FiberDescription fiberDesc = FiberDescription.Read(response);
+			//		desc.Fibers.Add(fiberDesc);
+			//	}
+			//}
 
 			desc.MainThreadIndex = reader.ReadInt32();
 
@@ -295,6 +295,7 @@ namespace Profiler.Data
 	{
 	    public byte additionalDataType = 0;
 	    public string sourceCode;
+	    public string thisArgs;
         public EventDescription Description { get; private set; }
 		public EventFrame Frame { get; set; }
 
@@ -322,10 +323,12 @@ namespace Profiler.Data
 		        int sourceLength = reader.ReadInt32();
 		        sourceCode = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(sourceLength));
 		    }
+		    int thisArgsLength = reader.ReadInt32();
+		    thisArgs = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(thisArgsLength));
 
         }
 
-		public static Entry Read(BinaryReader reader, EventDescriptionBoard board)
+        public static Entry Read(BinaryReader reader, EventDescriptionBoard board)
 		{
 			Entry res = new Entry();
 			res.ReadEntry(reader, board);
