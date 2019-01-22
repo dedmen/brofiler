@@ -36,8 +36,6 @@ namespace Profiler
 			this.Loaded += MainWindow_Loaded;
 
 			this.Closing += MainWindow_Closing;
-			HamburgerMenuControl.SelectedItem = CaptureMenuItem;
-			HamburgerMenuControl.Content = CaptureMenuItem;
 		}
 
 		private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -54,18 +52,20 @@ namespace Profiler
 
 		private void MainWindow_OpenCapture(object sender, OpenCaptureEventArgs e)
 		{
-			HamburgerMenuControl.SelectedItem = CaptureMenuItem;
-			HamburgerMenuControl.Content = CaptureMenuItem;
+			//HamburgerMenuControl.SelectedItem = CaptureMenuItem;
+			//HamburgerMenuControl.Content = CaptureMenuItem;
 
 			if (FrameCaptureControl.LoadFile(e.Path))
 			{
-				FileHistory.Add(e.Path);
+				//FileHistory.Add(e.Path);
+				//UpdateTitle(e.Path);
 			}
 		}
 
 		private void MainWindow_SaveCapture(object sender, SaveCaptureEventArgs e)
 		{
-			FileHistory.Add(e.Path);
+			//FileHistory.Add(e.Path);
+			//UpdateTitle(e.Path);
 		}
 
 
@@ -200,12 +200,6 @@ namespace Profiler
 			from.Seek(0, SeekOrigin.Begin);
 			from.CopyTo(to);
 			from.Seek(pos, SeekOrigin.Begin);
-		}
-
-
-		private void HamburgerMenuControl_ItemClick(object sender, ItemClickEventArgs e)
-		{
-			HamburgerMenuControl.Content = e.ClickedItem;
 		}
 	}
 

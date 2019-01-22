@@ -1,4 +1,5 @@
-﻿using Profiler.Data;
+﻿using MahApps.Metro.Controls;
+using Profiler.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,10 +35,10 @@ namespace Profiler.Controls
 
 			WarningTimer = new DispatcherTimer(TimeSpan.FromSeconds(12.0), DispatcherPriority.Background, OnWarningTimeout, Application.Current.Dispatcher);
 
+			FrameInfoControl.SelectedTreeNodeChanged += new SelectedTreeNodeChangedHandler(FrameInfo_OnSelectedTreeNodeChanged);
+
 			timeLine.ShowWarning += TimeLine_ShowWarning;
 			warningBlock.Visibility = Visibility.Collapsed;
-
-			FrameInfoControl.SelectedTreeNodeChanged += new SelectedTreeNodeChangedHandler(FrameInfo_OnSelectedTreeNodeChanged);
 		}
 
 		public bool LoadFile(string path)
@@ -188,6 +189,31 @@ namespace Profiler.Controls
 		{
 			SettingsWindow settingsWindow = new SettingsWindow();
 			settingsWindow.Show();
+		}
+
+		private void OnOpenCommandExecuted(object sender, ExecutedRoutedEventArgs args)
+		{
+			System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
+			dlg.Filter = "Brofiler files (*.bro)|*.bro";
+			dlg.Title = "Load profiler results?";
+			if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				RaiseEvent(new OpenCaptureEventArgs(dlg.FileName));
+			}
+		}
+
+		private void OnSaveCommandExecuted(object sender, ExecutedRoutedEventArgs args)
+		{
+			String path = timeLine.Save();
+			if (path != null)
+			{
+				RaiseEvent(new SaveCaptureEventArgs(path));
+			}
+		}
+
+		private void OnSearchCommandExecuted(object sender, ExecutedRoutedEventArgs args)
+		{
+			ThreadView.FunctionSearchControl.Open();
 		}
 	}
 }
