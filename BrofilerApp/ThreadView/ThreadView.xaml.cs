@@ -616,8 +616,8 @@ namespace Profiler
 
 		private void ShowSyncWorkButton_Click(object sender, RoutedEventArgs e)
 		{
-			scroll.SyncDraw = ShowSyncWorkButton.IsChecked.Value ? ThreadScroll.SyncDrawType.Work : ThreadScroll.SyncDrawType.Wait;
-			UpdateSurface();
+			//scroll.SyncDraw = ShowSyncWorkButton.IsChecked.Value ? ThreadScroll.SyncDrawType.Work : ThreadScroll.SyncDrawType.Wait;
+			//UpdateSurface();
 		}
 
 		private void CallstackFilterDrowpdown_Click(object sender, RoutedEventArgs e)
