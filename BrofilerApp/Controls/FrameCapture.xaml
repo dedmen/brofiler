@@ -96,7 +96,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Expander Header="Timeline (Block Info = Ctrl + LMB)" Margin="0" VerticalContentAlignment="Stretch" UseLayoutRounding="False" IsExpanded="True" MahApps:ButtonHelper.PreserveTextCase="True">
+            <Expander Header="Thread Timeline (Block Info = Ctrl + LMB)" Margin="0" VerticalContentAlignment="Stretch" UseLayoutRounding="False" IsExpanded="True" MahApps:ButtonHelper.PreserveTextCase="True">
                 <Grid>
                     <Profiler:ThreadView x:Name="ThreadView" Height="Auto" MinHeight="1" HorizontalAlignment="Stretch" Margin="-4,-2,-4,0" VerticalAlignment="Stretch" Width="Auto" MaxHeight="{Binding ActualHeight, ElementName=BottomGrid, Converter={StaticResource SubtractConverter}, ConverterParameter={StaticResource MinFrameInfoHeight}}" />
                 </Grid>
